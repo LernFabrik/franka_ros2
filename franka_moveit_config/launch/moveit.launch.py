@@ -227,6 +227,15 @@ def generate_launch_description():
         launch_arguments={'robot_ip': robot_ip,
                           use_fake_hardware_parameter_name: use_fake_hardware}.items(),
     )
+
+    #########
+    world_frame_publisher = Node(
+    package='tf2_ros',
+    executable='static_transform_publisher',
+    name='world_to_base_link',
+    arguments=['0', '0', '0', '0', '0', '0', '1', 'world', 'panda_link0']
+    )
+
     return LaunchDescription(
         [robot_arg,
          use_fake_hardware_arg,
@@ -238,7 +247,8 @@ def generate_launch_description():
          ros2_control_node,
          joint_state_publisher,
          franka_robot_state_broadcaster,
-         gripper_launch_file
+         gripper_launch_file,
+         world_frame_publisher
          ]
         + load_controllers
     )
