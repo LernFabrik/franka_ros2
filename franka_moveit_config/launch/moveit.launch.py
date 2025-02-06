@@ -107,6 +107,37 @@ def generate_launch_description():
                                      '/MoveItSimpleControllerManager',
     }
 
+    planning_pipelines_config = PathJoinSubstitution(
+        [
+            FindPackageShare('franka_moveit_config'),
+            "config",
+            "planning_pipelines_config.yaml",
+        ]
+    )
+
+    move_group_capabilities = {
+        "capabilities": """pilz_industrial_motion_planner/MoveGroupSequenceAction \
+            pilz_industrial_motion_planner/MoveGroupSequenceService"""
+    }
+
+    move_group_request_adapters = {
+        "request_adapters": """default_planner_request_adapters/AddRuckigTrajectorySmoothing \
+           default_planner_request_adapters/AddTimeOptimalParameterization"""
+    }
+
+    pilz_planning_pipeline_config = {
+        "move_group": {},
+        "robot_description_planning":{},
+    }
+
+    pilz_planning_yaml = load_yaml("franka_moveit_config", "config/pilz_industrial_motion_planner_planning.yaml")
+    pilz_planning_pipeline_config["move_group"].update(pilz_planning_yaml)
+    pilz_joint_limits_yaml = load_yaml("franka_moveit_config", "config/joint_limits.yaml")
+    pilz_planning_pipeline_config["robot_description_planning"].update(pilz_joint_limits_yaml)
+
+    pilz_cartesian_limits_yaml = load_yaml("franka_moveit_config", "config/pilz_cartesian_limits.yaml")
+    pilz_planning_pipeline_config["robot_description_planning"].update(pilz_cartesian_limits_yaml)
+
     trajectory_execution = {
         'moveit_manage_controllers': True,
         'trajectory_execution.allowed_execution_duration_scaling': 1.2,
@@ -130,7 +161,11 @@ def generate_launch_description():
             robot_description,
             robot_description_semantic,
             kinematics_yaml,
+            planning_pipelines_config,
             ompl_planning_pipeline_config,
+            pilz_planning_pipeline_config,
+            move_group_capabilities,
+            move_group_request_adapters,
             trajectory_execution,
             moveit_controllers,
             planning_scene_monitor_parameters,
