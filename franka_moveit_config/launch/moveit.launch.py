@@ -58,6 +58,8 @@ def generate_launch_description():
     # planning_context
     franka_xacro_file = os.path.join(get_package_share_directory('franka_description'), 'robots',
                                      'panda_arm.urdf.xacro')
+    # franka_xacro_file = os.path.join(get_package_share_directory('franka_description'), 'robots',
+    #                                  'panda_arm_with_env.urdf.xacro')
     robot_description_config = Command(
         [FindExecutable(name='xacro'), ' ', franka_xacro_file, ' hand:=true',
          ' robot_ip:=', robot_ip, ' use_fake_hardware:=', use_fake_hardware,
